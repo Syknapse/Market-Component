@@ -17,7 +17,6 @@ fetch(tokenAPI)
 .then(response => {
         response.json().then(data => {
             token = data.token;
-            // console.log(token);
         })
 })
 .then(
@@ -38,63 +37,64 @@ fetch(tokenAPI)
             response.json().then(data => {
                 data.categories.forEach(category => {
                     let categorySection = document.createElement('li');
-                    let categoryIcon = document.createElement('img');
-                    let categoryName = document.createElement('strong');
+                    let categoryIcon = document.createElement('span');
+                    let categoryName = document.createElement('span');
                     let subcategories = document.createElement('ul');
-                    // let subcategorySection = document.createElement('li');
-                    // let subcategoryName = document.createElement('a');
+                    let arrow = document.createElement('span');
                     let subcategoryDisplay = '';
 
                     productCategories.appendChild(categorySection);
                     categorySection.appendChild(categoryIcon);
                     categorySection.appendChild(categoryName);
+                    categorySection.appendChild(arrow);
+                    categorySection.classList.add('category');
+                    arrow.classList.add('subcategory-toggle');
                     categorySection.appendChild(subcategories);
-                    categoryIcon.setAttribute('src', category.icon);
+                    categoryIcon.style.background = `url(${category.icon}) center / cover no-repeat`;
                     categoryName.innerText = category.name;
 
-                    // console.log(category.categories);
-
                     category.categories.forEach(subcategory => {
-                        let subcategoryUrl = `/tienda/${marketInput}/${category.shortcut}/${subcategory.shortcut}`;
+                        let subcategoryUrl = `http://api.comprea.com//tienda/${marketInput}/${category.shortcut}/${subcategory.shortcut}`;
 
                         subcategoryDisplay +=
                         `<li>
-                            <a href="${subcategoryUrl}">${subcategory.name}</a>
+                            <a href="${subcategoryUrl}" target="_blank">${subcategory.name}</a>
                         </li>`;
-
-                        /* subcategories.appendChild(subcategorySection);
-                        subcategorySection.appendChild(subcategoryName);
-                        subcategoryName.setAttribute('href', subcategoryUrl);
-                        subcategoryName.innerText = subcategory.name; */
-
-                        // console.log(subcategory);
                     })
-                    let seeSection = document.createElement('li');
-                    let seeSectionLink = document.createElement('a');
-                    let categoryUrl = `/tienda/${marketInput}/${category.shortcut}`;
+                    let fullSection = document.createElement('li');
+                    let fullSectionLink = document.createElement('a');
+                    let categoryUrl = `http://api.comprea.com/tienda/${marketInput}/${category.shortcut}`;
 
                     subcategories.innerHTML = subcategoryDisplay;
-                    subcategories.insertBefore(seeSection, subcategories.firstChild);
-                    seeSection.appendChild(seeSectionLink);
-                    seeSectionLink.setAttribute('href', categoryUrl);
-                    seeSectionLink.innerText = 'Ver toda la sección';
+                    subcategories.classList.add('subcategories');
+                    subcategories.insertBefore(fullSection, subcategories.firstChild);
+                    fullSection.appendChild(fullSectionLink);
+                    fullSectionLink.setAttribute('href', categoryUrl);
+                    fullSectionLink.innerText = 'Ver toda la sección';
+
+                    categorySection.addEventListener('click', event => {
+                        const selected = document.querySelector('.selected');
+                        // fire only when category li is clicked
+                        if ((event.target && event.target.matches('li.category span')) || (event.target && event.target.matches('li.category'))) {
+                            const pressed = document.querySelector('.pressed');
+                            event.currentTarget.classList.add('pressed');
+                            if (pressed) {
+                                pressed.classList.toggle('pressed');
+                                selected.classList.remove('selected');
+                            }
+                        } else if (event.target && event.target.matches('.subcategories li a')) {
+                            if (selected) {
+                                selected.classList.remove('selected');
+                            }
+                            event.target.classList.add('selected');
+                        }
+                    });
                 })
                 console.log(data);
-                // console.log(data.categories[0]);
-                // console.log(data.categories["0"].categories["0"].icon);
             })
     })
 )
 
-
-
 function thisMarket(market) {
     return market.name === `${marketInput}`;
 }
-
-/* fetch('http://api.comprea.com/user/postalcode?token=af8253d50caee90ef4c0f164fbef7792&postalcode=28010')
-.then(response => {
-        response.json().then(data => {
-            console.log(data);
-        })
-}) */
