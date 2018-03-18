@@ -54,7 +54,8 @@ fetch(tokenAPI)
 )
 .catch(error => console.log(error))
 
-// Handle market ******************
+/* Handle market ******************
+********************************* */
 function getSelectedMarket(data) {
     selectedMarket = data.markets.find(thisMarket);
     marketIcon.setAttribute('src', selectedMarket.icon);
@@ -63,12 +64,15 @@ function getSelectedMarket(data) {
     header.style.backgroundColor = `rgb(${selectedMarket.color})`;
 }
 
+// Search for the market name based on an input
 function thisMarket(market) {
     return market.name === `${marketInput}`;
 }
 
-// Handle product categories ******************
+/* Handle product categories ******************
+********************************************* */
 function getProductsCategories(data) {
+    //Create a component for each category
     data.categories.forEach(category => {
         let categorySection = document.createElement('li');
         let categoryIcon = document.createElement('span');
@@ -87,6 +91,7 @@ function getProductsCategories(data) {
         categoryIcon.style.background = `url(${category.icon}) center / cover no-repeat`;
         categoryName.innerText = category.name;
 
+        // Create a link component for each subcategory
         category.categories.forEach(subcategory => {
             let subcategoryUrl = `http://api.comprea.com//tienda/${marketInput}/${category.shortcut}/${subcategory.shortcut}`;
 
@@ -95,6 +100,8 @@ function getProductsCategories(data) {
                 <a href="${subcategoryUrl}" target="_blank">${subcategory.name}</a>
             </li>`;
         })
+
+        // Create the full subcategory section
         let fullSection = document.createElement('li');
         let fullSectionLink = document.createElement('a');
         let categoryUrl = `http://api.comprea.com/tienda/${marketInput}/${category.shortcut}`;
@@ -109,7 +116,6 @@ function getProductsCategories(data) {
 
         handleEvents(categorySection);
     })
-    console.log(data);
 }
 
 // Handle pressed and selected events
@@ -117,6 +123,7 @@ function handleEvents(target) {
     target.addEventListener('click', event => {
         const pressed = document.querySelector('.pressed');
         const selected = document.querySelector('.selected');
+
         // Fire only when category li is clicked
         if ((event.target && event.target.matches('li.category span')) || (event.target && event.target.matches('li.category'))) {
             event.currentTarget.classList.add('pressed');
